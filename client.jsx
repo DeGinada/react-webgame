@@ -1,7 +1,7 @@
 // import 쓰는 경우
 import React from 'react';
 import ReactDom from 'react-dom';
-import {hot} from 'react-hot-loader/root';
+import { hot } from 'react-hot-loader/root';
 
 import NumberBaseball from './NumberBaseball';
 

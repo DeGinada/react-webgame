@@ -1,10 +1,10 @@
-import React, { component } from 'react';
+import React, { Component } from 'react';
 
 function getNumbers() {
 
 }
 
-class NumberBaseball extends component {
+class NumberBaseball extends Component {
     state = {
         result: '',
         value: '',
