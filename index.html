@@ -1,7 +1,26 @@
 <html>
 <head>
     <meta charset="UTF-8" />
-    <title>숫자야구</title>
+    <title>반응속도체크</title>
+    <!-- 반응속도체크에서 사용되는 스타일 -->
+    <style>
+        #screen {
+            width: 300px;
+            height: 200px;
+            text-align: center;
+            user-select: none;
+        }
+        #screen.waiting {
+            background-color: aqua;
+        }
+        #screen.ready {
+            background-color: red;
+            color: white;
+        }
+        #screen.now {
+            background-color: greenyellow;
+        }
+    </style>
 </head>
 <body>
     <div id="root"></div>
