@@ -1,67 +1,84 @@
-import React, { Component } from 'react';
+import React, { useState, useRef } from 'react';
 
-class ResponseCheck extends Component {
-    state = {
-        state: 'waiting',
-        message: '클릭해서 시작하세요.',
-        result: [],
-    };
+const ResponseCheck = () => {
+    const [state, setState] = useState('waiting');
+    const [message, setMessage] = useState('클릭해서 시작하세요.');
+    const [result, setResult] = useState([]);
+    const timeout = useRef(null);
+    const startTime = useRef();
+    const endTime = useRef();
 
-    // 여기에 선언하면 값이 변경될때 render() 안탐
-    timeout;
-    startTime;
-    endTime;
+    const onClickScreen = () => {
 
-    onClickScreen = () => {
-        const { state, message, result } = this.state;
         if(state === 'waiting') {
-            this.setState({
-                state: 'ready',
-                message: '초록색이 되면 클릭하세요.',
-            });
-            this.timeout = setTimeout(() => {
-                this.setState({
-                    state: 'now',
-                    message: '지금 클릭',
-                });
-                this.startTime = new Date();
+
+            setState('ready');
+            setMessage('초록색이 되면 클릭하세요.');
+
+            timeout.current = setTimeout(() => {
+
+                setState('now');
+                setMessage('지금 클릭');
+                startTime.current = new Date();
             }, Math.floor(Math.random() * 1000) + 2000);    // 2~3초 랜덤
+
         } else if(state === 'ready') {
-            clearTimeout(this.timeout);
-            this.setState({
-                state: 'waiting',
-                message: '너무 성급하시군요! 초록색이 된 후에 클릭하세요.'
-            });
+            clearTimeout(timeout.current);
+
+            setState('waiting');
+            setMessage('너무 성급하시군요! 초록색이 된 후에 클릭하세요.');
+
         } else if(state === 'now') {
-            this.endTime = new Date();
-            this.setState((prevState) => {
-                return {
-                    state: 'waiting',
-                    message: '클릭해서 시작하세요.',
-                    result: [...prevState.result, this.endTime - this.startTime],
-                };
+            endTime.current = new Date();
+
+            setState('waiting');
+            setMessage('클릭해서 시작하세요.');
+            setResult((prevResult) => {
+                return [...prevResult, endTime.current - startTime.current];
             });
         }
     };
 
-    renderAverage = () => {
-        const { result } = this.state;
-        return (
-            result.length === 0 ? null 
-            : <div>평균 시간: {result.reduce((a, c) => a + c) / result.length}ms</div>
-        )
-    }
+    const onReset = () => {
+        setResult([]);
+    };
 
-    render() {      // 렌더 안에서 for, if 못씀.
-        return (
-            <>
-                <div id="screen" className={this.state.state} onClick={this.onClickScreen}>
-                    {this.state.message}
-                </div>
-                {this.renderAverage()}
+    const renderAverage = () => {
+        return result.length === 0 ? null 
+            : <>
+                <div>평균 시간: {result.reduce((a, c) => a + c) / result.length}ms</div>
+                <button onClick={onReset}>reset</button>
             </>
-        )
-    }
+        
+    };
+
+    // 배열로 담아서 return 가능함. 대신 key 붙여줘야함.
+    // return [
+    //     <div key="사과">사과</div>,
+    //     <div key="귤">귤</div>,
+    //     <div key="배">배</div>,
+    //     <div key="감">감</div>,
+    // ];
+
+    return (
+        <>
+            <div id="screen" className={state} onClick={onClickScreen}>
+                {message}
+            </div>
+            {/* return 안에 if문 쓰는 번 : 즉시 실행 함수를 만들어서 내부에 if문 */}
+            {/* {(() => {
+                if(result.length === 0) {
+                    return null;
+                } else {
+                    return <>
+                        <div>평균 시간: {result.reduce((a, c) => a + c) / result.length}ms</div>
+                        <button onClick={onReset}>reset</button>
+                    </>
+                }
+            })()} */}
+            {renderAverage()}
+        </>
+    );
 }
 
 export default ResponseCheck;
